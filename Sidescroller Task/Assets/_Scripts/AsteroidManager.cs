@@ -1,0 +1,92 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+using UnityEngine.Serialization;
+using Random = UnityEngine.Random;
+
+public class AsteroidManager : MonoBehaviour
+{
+    [SerializeField] private Asteroid asteroidPrefab;
+    [SerializeField] private float spawnHeight;
+    [Range(0, 10)] [SerializeField] private float spawnDeltaX;
+    [SerializeField] private float minTimeToSpawn;
+    [SerializeField] private float maxTimeToSpawn;
+    [SerializeField] private float minSpeed;
+    [SerializeField] private float maxSpeed;
+
+    private float _timeToSpawns;
+    private List<Asteroid> _asteroids;
+
+    private void Awake()
+    {
+        _asteroids = new List<Asteroid>();
+    }
+    
+    private void Update()
+    {
+        RandomAsteroidRain(Time.deltaTime);
+        foreach (var asteroid in _asteroids.Where(asteroid => asteroid))
+        {
+            MoveAsteroid(asteroid);
+        }
+    }
+    
+    private void MoveAsteroid(Asteroid asteroid)
+    {
+        asteroid.transform.Translate(Vector2.down * (asteroid.Speed * Time.deltaTime));
+    }
+    
+    private void RandomAsteroidRain(float deltaTime)
+    {
+        if (_timeToSpawns <= 0)
+        {
+            // random pos around origin
+            SpawnAsteroid(
+                new Vector2(Random.Range(-spawnDeltaX, spawnDeltaX), spawnHeight), 
+                Random.Range(minSpeed, maxSpeed));
+            // random time till next spawn
+            _timeToSpawns = Random.Range(minTimeToSpawn,maxTimeToSpawn);
+        }
+        else
+        {
+            _timeToSpawns -= deltaTime;
+        }
+    }
+    
+    private void SpawnAsteroid(Vector2 position, float speed)
+    {
+        var asteroid = Instantiate(
+            asteroidPrefab.gameObject,
+            position,
+            Quaternion.identity,
+            transform).GetComponent<Asteroid>();
+        asteroid.Init(speed);
+        
+        _asteroids.Add(asteroid);
+    }
+
+    private void DestroyAsteroid(Asteroid asteroid)
+    {
+        _asteroids.Remove(asteroid);
+        Destroy(asteroid.gameObject);
+    }
+
+    // for kill zone
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Asteroid"))
+        {
+            DestroyAsteroid(other.GetComponent<Asteroid>());
+        }
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        // visualize spawning area
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireCube(
+            new Vector3(0f, spawnHeight, 0f), 
+            new Vector3(spawnDeltaX*2, .5f, 1f));
+    }
+}
