@@ -2,31 +2,58 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
+
+// TODO: Constrain position to not leave screen, not necessary but nice to have
 
 public class Player : MonoBehaviour
 {
     [SerializeField] private float maxSpeed;
-
+    
+    private PowerUps _powerUps;
+    private Vector2 _startingPosition;
+    private bool _alive;
     private float _moveDirection;
     private float _speed;
     private Camera _mainCam;
 
-    public event Action<Vector2> OnDeath;
+    public static event Action OnDeath;
     
     private void Awake()
     {
-        _speed = maxSpeed;
+        _startingPosition = transform.position;
         _mainCam = Camera.main;
+        _powerUps = GetComponentInChildren<PowerUps>();
+        GameManager.OnLaunch += ReadyLaunch;
+        GameManager.OnPlay += Launch;
     }
 
+    private void ReadyLaunch()
+    {
+        _alive = false;
+        transform.position = _startingPosition;
+    }
+    
+    private void Launch()
+    {
+        _alive = true;
+        _speed = maxSpeed;
+    }
+    
     private void Update()
     {
-        _moveDirection = (_mainCam.ScreenToWorldPoint(Input.mousePosition) - transform.position).normalized.x;
+        if (!_alive) return;
+         
+        GetInput();
         
         MoveInDirection(_speed, _moveDirection);
-        
     }
 
+    private void GetInput()
+    {
+        _moveDirection = (_mainCam.ScreenToWorldPoint(Input.mousePosition) - transform.position).normalized.x;
+    }
+    
     private void MoveInDirection(float speed, float direction)
     {
         transform.Translate(direction * speed * Time.deltaTime,0f,0f);
@@ -36,7 +63,13 @@ public class Player : MonoBehaviour
     {
         if (other.CompareTag("Asteroid"))
         {
-            OnDeath?.Invoke(new Vector2()); // put collision source direction here
+            Die();
         }
+    }
+
+    private void Die()
+    {
+        _alive = false;
+        OnDeath?.Invoke();
     }
 }
