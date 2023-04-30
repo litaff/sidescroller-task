@@ -8,13 +8,12 @@ using Random = UnityEngine.Random;
 public class AsteroidManager : MonoBehaviour
 {
     [SerializeField] private Asteroid asteroidPrefab;
-    [SerializeField] private float spawnHeight;
-    [Range(0, 10)] [SerializeField] private float spawnDeltaX;
     [SerializeField] private float minTimeToSpawn;
     [SerializeField] private float maxTimeToSpawn;
     [SerializeField] private float minSpeed;
     [SerializeField] private float maxSpeed;
     [SerializeField] private float delayToStart;
+    [SerializeField] private SpawnPositionManager spawnPositionManager;
     
     private bool _spawnAsteroids;
     private float _timeToSpawns;
@@ -78,7 +77,7 @@ public class AsteroidManager : MonoBehaviour
         {
             // random pos around origin
             SpawnAsteroid(
-                new Vector2(Random.Range(-spawnDeltaX, spawnDeltaX), spawnHeight), 
+                spawnPositionManager.GetRandomPosition(), 
                 Random.Range(minSpeed, maxSpeed));
             // random time till next spawn
             _timeToSpawns = Random.Range(minTimeToSpawn,maxTimeToSpawn);
@@ -114,14 +113,5 @@ public class AsteroidManager : MonoBehaviour
         {
             DestroyAsteroid(other.GetComponent<Asteroid>());
         }
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        // visualize spawning area
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireCube(
-            new Vector3(0f, spawnHeight, 0f), 
-            new Vector3(spawnDeltaX*2, .5f, 1f));
     }
 }

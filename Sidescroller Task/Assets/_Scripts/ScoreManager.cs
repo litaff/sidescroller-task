@@ -5,6 +5,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+// TODO: display only when > 0
+
 public class ScoreManager : MonoBehaviour
 {
     [SerializeField] private TMP_Text scoreDisplay;

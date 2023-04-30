@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.Serialization;
 
 // TODO: Constrain position to not leave screen, not necessary but nice to have
+// TODO: Speed up on launch to max speed
 
 public class Player : MonoBehaviour
 {

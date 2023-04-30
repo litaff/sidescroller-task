@@ -14,6 +14,7 @@ public class PowerUps : MonoBehaviour
     {
         shield.Init();
         blast.Init();
+        PowerUpCharge.OnChargePickUp += ChargePickUp;
     }
 
     public void UpdatePowerUps()
@@ -45,6 +46,21 @@ public class PowerUps : MonoBehaviour
         }
     }
 
+    private void ChargePickUp(ChargeType type)
+    {
+        switch (type)
+        {
+            case ChargeType.Shield:
+                shield.GainCharge();
+                break;
+            case ChargeType.Blast:
+                blast.GainCharge();
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(type), type, null);
+        }
+    }
+    
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (shield.IsActive || blast.IsActive)
