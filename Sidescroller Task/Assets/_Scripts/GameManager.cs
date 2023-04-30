@@ -6,6 +6,7 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     private GameState _state;
+    private List<bool> _busy; // if empty nothing is happening
 
     public static Action OnLaunch;
     public static Action OnPlay;
@@ -14,21 +15,24 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         Player.OnDeath += LoseState;
+        FadeManager.OnFadingStart += Busy;
+        FadeManager.OnFadingEnd += Free;
     }
 
     private void Start()
     {
+        _busy = new List<bool>();
         LaunchState();
     }
 
     private void Update()
     {
-        if (_state == GameState.Launch)
+        if (_state == GameState.Launch && NotBusy())
         {
             if (Input.anyKeyDown) PlayState();
         }
 
-        if (_state == GameState.Lose)
+        if (_state == GameState.Lose && NotBusy())
         {
             if (Input.anyKeyDown) LaunchState();
         }
@@ -50,5 +54,20 @@ public class GameManager : MonoBehaviour
     {
         _state = GameState.Lose;
         OnLose?.Invoke();
+    }
+
+    private bool NotBusy()
+    {
+        return _busy.Count <= 0;
+    }
+    
+    private void Busy()
+    {
+        _busy.Add(true);
+    }
+
+    private void Free()
+    {
+        _busy.RemoveAt(0);
     }
 }
