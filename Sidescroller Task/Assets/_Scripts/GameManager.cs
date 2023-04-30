@@ -5,10 +5,12 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    [SerializeField] private int launchingTime;
     private GameState _state;
     private List<bool> _busy; // if empty nothing is happening
 
     public static Action OnLaunch;
+    public static Action OnLaunching;
     public static Action OnPlay;
     public static Action OnLose;
 
@@ -17,6 +19,7 @@ public class GameManager : MonoBehaviour
         Player.OnDeath += LoseState;
         FadeManager.OnFadingStart += Busy;
         FadeManager.OnFadingEnd += Free;
+        LaunchingManager.OnLaunchingEnd += PlayState;
     }
 
     private void Start()
@@ -29,7 +32,7 @@ public class GameManager : MonoBehaviour
     {
         if (_state == GameState.Launch && NotBusy())
         {
-            if (Input.anyKeyDown) PlayState();
+            if (Input.anyKeyDown) OnLaunching?.Invoke();
         }
 
         if (_state == GameState.Lose && NotBusy())
@@ -43,7 +46,7 @@ public class GameManager : MonoBehaviour
         _state = GameState.Launch;
         OnLaunch?.Invoke();
     }
-
+    
     private void PlayState()
     {
         _state = GameState.Play;
