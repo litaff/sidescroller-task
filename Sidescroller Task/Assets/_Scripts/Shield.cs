@@ -1,54 +1,58 @@
 ﻿using System;
+using System.Collections;
 using UnityEditor.Timeline.Actions;
 using UnityEngine;
+using UnityEngine.Serialization;
 
+[Serializable]
 public class Shield : PowerUp
 {
+    [SerializeField] private float range;
+    [SerializeField] private float duration;
+    [Range(0,1)] [SerializeField] private float whenToFlicker;
+    [SerializeField] private float flickerRate;
     private float _timeLeft;
-    private readonly float _duration;
-    private readonly Collider2D _shieldCollider2D;
-    private readonly SpriteRenderer _spriteRenderer;
-
-    public static Action OnExpire;
-    
-    public bool IsActive { get; private set; }
-
-    public Shield(float duration, Collider2D collider, SpriteRenderer spriteRenderer) : base()
-    {
-        _duration = duration;
-        _shieldCollider2D = collider;
-        _shieldCollider2D.enabled = false;
-        _spriteRenderer = spriteRenderer;
-        _spriteRenderer.enabled = false;
-        IsActive = false;
-    }
+    private float _flickerTimer;
 
     public override bool OnUse()
     {
-        if (!base.OnUse() || !_shieldCollider2D || !_spriteRenderer || IsActive) return false;
-
-        IsActive = true;
-        _timeLeft = _duration;
-        _shieldCollider2D.enabled = true;
-        _spriteRenderer.enabled = true;
+        if (!base.OnUse()) return false;
         
+        _timeLeft = duration;
+        collider2D.radius = range;
+
         return true;
     }
 
-    public void Expire(float time)
+    public override void Progress(float time)
     {
         if (!IsActive) return;
         
         if (_timeLeft <= 0)
         {
-            IsActive = false;
-            _shieldCollider2D.enabled = false;
-            _spriteRenderer.enabled = false;
-            OnExpire?.Invoke();
+            End();
         }
         else
         {
             _timeLeft -= time;
+
+            if (_timeLeft / duration < whenToFlicker)
+            {
+                Flicker(time);
+            }
+        }
+    }
+
+    private void Flicker(float time)
+    {
+        if (_flickerTimer <= 0)
+        {
+            renderer.enabled = !renderer.enabled;
+            _flickerTimer = 1f / flickerRate;
+        }
+        else
+        {
+            _flickerTimer -= time;
         }
     }
 }
