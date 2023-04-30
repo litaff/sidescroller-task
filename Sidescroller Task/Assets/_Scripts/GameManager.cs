@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] private int launchingTime;
     private GameState _state;
     private List<bool> _busy; // if empty nothing is happening
 
@@ -32,7 +31,7 @@ public class GameManager : MonoBehaviour
     {
         if (_state == GameState.Launch && NotBusy())
         {
-            if (Input.anyKeyDown) OnLaunching?.Invoke();
+            if (Input.anyKeyDown) LaunchingState();
         }
 
         if (_state == GameState.Lose && NotBusy())
@@ -45,6 +44,12 @@ public class GameManager : MonoBehaviour
     {
         _state = GameState.Launch;
         OnLaunch?.Invoke();
+    }
+
+    private void LaunchingState()
+    {
+        _state = GameState.Launching;
+        OnLaunching?.Invoke();
     }
     
     private void PlayState()

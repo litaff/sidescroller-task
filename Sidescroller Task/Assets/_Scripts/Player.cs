@@ -47,6 +47,7 @@ public class Player : MonoBehaviour
         GetInput();
         
         MoveInDirection(_speed, _moveDirection);
+        _powerUps.UpdatePowerUps();
     }
 
     private void GetInput()

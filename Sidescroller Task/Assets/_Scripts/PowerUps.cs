@@ -6,8 +6,6 @@ using UnityEngine.UIElements;
 public class PowerUps : MonoBehaviour
 {
     [SerializeField] private Shield shield;
-
-    
     [SerializeField] private Blast blast;
 
     public static Action<Asteroid> OnAsteroidCollision;
@@ -18,7 +16,7 @@ public class PowerUps : MonoBehaviour
         blast.Init();
     }
 
-    private void Update()
+    public void UpdatePowerUps()
     {
         shield.Progress(Time.deltaTime);
         blast.Progress(Time.deltaTime);
