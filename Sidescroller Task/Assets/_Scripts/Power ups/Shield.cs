@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections;
-using UnityEditor.Timeline.Actions;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 [Serializable]
 public class Shield : PowerUp
@@ -11,15 +8,18 @@ public class Shield : PowerUp
     [SerializeField] private float duration;
     [Range(0,1)] [SerializeField] private float whenToFlicker;
     [SerializeField] private float flickerRate;
+    [SerializeField] protected SpriteRenderer renderer;
     private float _timeLeft;
     private float _flickerTimer;
 
     public override bool OnUse()
     {
-        if (!base.OnUse()) return false;
+        if (!base.OnUse() || !renderer) return false;
         
+        if (renderer) renderer.enabled = false;
         _timeLeft = duration;
         collider2D.radius = range;
+        renderer.enabled = true;
 
         return true;
     }
@@ -54,5 +54,11 @@ public class Shield : PowerUp
         {
             _flickerTimer -= time;
         }
+    }
+
+    public override void End()
+    {
+        base.End();
+        renderer.enabled = false;
     }
 }

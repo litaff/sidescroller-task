@@ -1,26 +1,34 @@
 using System;
+using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
-using UnityEngine.UIElements;
 
 public class PowerUps : MonoBehaviour
 {
     [SerializeField] private Shield shield;
     [SerializeField] private Blast blast;
+    [SerializeField] private TMP_Text shieldChargeDisplay;
+    [SerializeField] private TMP_Text blastChargeDisplay;
 
     public static Action<Asteroid> OnAsteroidCollision;
 
     private void Awake()
     {
-        shield.Init();
-        blast.Init();
+        GameManager.OnLaunch += InitPowerUps;
         PowerUpCharge.OnChargePickUp += ChargePickUp;
     }
 
+    private void InitPowerUps()
+    {
+        shield.Init();
+        blast.Init();
+    }
+    
     public void UpdatePowerUps()
     {
         shield.Progress(Time.deltaTime);
+        shieldChargeDisplay.text = shield.GetCharges().ToString();
         blast.Progress(Time.deltaTime);
+        blastChargeDisplay.text = blast.GetCharges().ToString();
 
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {

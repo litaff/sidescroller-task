@@ -4,9 +4,7 @@ using UnityEngine;
 [Serializable]
 public abstract class PowerUp
 {
-    
     [SerializeField] protected CircleCollider2D collider2D;
-    [SerializeField] protected SpriteRenderer renderer;
     private int _charges;
     
     
@@ -16,7 +14,7 @@ public abstract class PowerUp
     public virtual void Init()
     {
         if (collider2D) collider2D.enabled = false;
-        if (renderer) renderer.enabled = false;
+        _charges = 1;
         IsActive = false;
     }
     
@@ -25,11 +23,10 @@ public abstract class PowerUp
     /// </summary>
     public virtual bool OnUse()
     {
-        if (_charges <= 0 || !collider2D || !renderer || IsActive) return false;
+        if (_charges <= 0 || !collider2D || IsActive) return false;
 
         _charges--;
         collider2D.enabled = true;
-        renderer.enabled = true;
         IsActive = true;
 
         return true;
@@ -43,7 +40,6 @@ public abstract class PowerUp
     {
         IsActive = false;
         collider2D.enabled = false;
-        renderer.enabled = false;
         OnEnd?.Invoke();
     }
     
