@@ -3,14 +3,31 @@
 public class Asteroid : MonoBehaviour
 {
     [SerializeField] private int bonus;
-    
-    public float Speed { get; private set; }
+    [SerializeField] private AsteroidSize size;
+    [SerializeField] private float speed;
 
-    public void Init(float speed)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="deviation"> Speed is multiplied by this </param>
+    public void DeviateSpeed(float deviation)
     {
-        Speed = speed > 0 ? speed : 0.1f;
+        if (deviation > 0)
+        {
+            speed *= deviation;
+        }
     }
 
+    public AsteroidSize GetSize()
+    {
+        return size;
+    }
+
+    public float GetSpeed()
+    {
+        return speed;
+    }
+    
     public int GetBonus()
     {
         return bonus;

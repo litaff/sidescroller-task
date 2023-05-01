@@ -9,11 +9,11 @@ using Random = UnityEngine.Random;
 
 public class AsteroidManager : MonoBehaviour
 {
-    [SerializeField] private Asteroid asteroidPrefab;
+    [SerializeField] private List<Asteroid> asteroidPrefabs;
     [SerializeField] private float minTimeToSpawn;
     [SerializeField] private float maxTimeToSpawn;
-    [SerializeField] private float minSpeed;
-    [SerializeField] private float maxSpeed;
+    [SerializeField] private float speedDeviation;
+    [SerializeField] private float chanceToSpawnLarger;
     [SerializeField] private float delayToStart;
     [SerializeField] private SpawnPositionManager spawnPositionManager;
     
@@ -70,17 +70,18 @@ public class AsteroidManager : MonoBehaviour
 
     private void MoveAsteroid(Asteroid asteroid)
     {
-        asteroid.transform.Translate(Vector2.down * (asteroid.Speed * Time.deltaTime));
+        asteroid.transform.Translate(Vector2.down * (asteroid.GetSpeed() * Time.deltaTime));
     }
     
     private void RandomAsteroidRain(float deltaTime)
     {
         if (_timeToSpawns <= 0)
         {
-            // random pos around origin
+            // random pos around origin, speed and size
             SpawnAsteroid(
-                spawnPositionManager.GetRandomPosition(), 
-                Random.Range(minSpeed, maxSpeed));
+                spawnPositionManager.GetRandomPosition(),
+                1f + Random.Range(-speedDeviation, speedDeviation),
+                GetAsteroidBySize(GetRandomSize(chanceToSpawnLarger)));
             // random time till next spawn
             _timeToSpawns = Random.Range(minTimeToSpawn,maxTimeToSpawn);
         }
@@ -89,15 +90,35 @@ public class AsteroidManager : MonoBehaviour
             _timeToSpawns -= deltaTime;
         }
     }
+
+    private AsteroidSize GetRandomSize(float deviation, AsteroidSize size = AsteroidSize.Small)
+    {
+        while (true)
+        {
+            if (Random.Range(0f, 1f) < deviation && size != AsteroidSize.Large)
+            {
+                size = size + 1;
+            }
+            else
+            {
+                return size;
+            }
+        }
+    }
+
+    private Asteroid GetAsteroidBySize(AsteroidSize size)
+    {
+        return asteroidPrefabs.Find(asteroid => asteroid.GetSize() == size);
+    }
     
-    private void SpawnAsteroid(Vector2 position, float speed)
+    private void SpawnAsteroid(Vector2 position, float deviation, Asteroid target)
     {
         var asteroid = Instantiate(
-            asteroidPrefab.gameObject,
+            target.gameObject,
             position,
             Quaternion.identity,
             transform).GetComponent<Asteroid>();
-        asteroid.Init(speed);
+        asteroid.DeviateSpeed(deviation);
         
         _asteroids.Add(asteroid);
     }

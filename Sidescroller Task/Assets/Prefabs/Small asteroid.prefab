@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5078304160754295103}
   - component: {fileID: 8579480855189700112}
   m_Layer: 7
-  m_Name: Asteroid
+  m_Name: Small asteroid
   m_TagString: Asteroid
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -50,7 +50,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Radius: 0.25
 --- !u!114 &5078304160754295103
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -63,7 +63,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e721933efa6a447ea2b7072ddb92dd21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bonus: 5
+  bonus: 1
+  size: 0
+  speed: 8
 --- !u!50 &8579480855189700112
 Rigidbody2D:
   serializedVersion: 4
@@ -158,8 +160,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
-  m_Color: {r: 0.41918835, g: 0.42872405, b: 0.5660378, a: 1}
+  m_Sprite: {fileID: -390131635, guid: 6ab7509c19196414485886eb07324670, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
