@@ -1,11 +1,5 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
-
-// TODO: display only when > 0
 
 public class ScoreManager : MonoBehaviour
 {
@@ -28,6 +22,7 @@ public class ScoreManager : MonoBehaviour
     {
         _timeScore = 0;
         _scoring = false;
+        scoreDisplay.enabled = false;
     }
 
     private void Update()
@@ -57,6 +52,7 @@ public class ScoreManager : MonoBehaviour
     private void StartScoring()
     {
         _scoring = true;
+        scoreDisplay.enabled = true;
     }
 
     private void StopScoring()
