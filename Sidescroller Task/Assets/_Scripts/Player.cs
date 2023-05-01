@@ -10,6 +10,8 @@ using UnityEngine.Serialization;
 public class Player : MonoBehaviour
 {
     [SerializeField] private float maxSpeed;
+    [SerializeField] private float timeToMaxSpeed;
+    [SerializeField] private float positionXDelta;
     
     private PowerUps _powerUps;
     private Vector2 _startingPosition;
@@ -23,6 +25,7 @@ public class Player : MonoBehaviour
     private void Awake()
     {
         _startingPosition = transform.position;
+        timeToMaxSpeed += 0.001f; // make sure it's not 0
         _mainCam = Camera.main;
         _powerUps = GetComponentInChildren<PowerUps>();
         GameManager.OnLaunch += ReadyLaunch;
@@ -38,19 +41,26 @@ public class Player : MonoBehaviour
     private void Launch()
     {
         _alive = true;
-        _speed = maxSpeed;
     }
     
     private void Update()
     {
         if (!_alive) return;
-         
+        
+        if (_speed < maxSpeed) SpeedUp(Time.deltaTime);
+
         GetInput();
         
         MoveInDirection(_speed, _moveDirection);
         _powerUps.UpdatePowerUps();
     }
 
+    private void SpeedUp(float time)
+    {
+        _speed += maxSpeed/timeToMaxSpeed * time;
+        _speed = Mathf.Clamp(_speed, 0f, maxSpeed); // prevent from going over
+    }
+    
     private void GetInput()
     {
         _moveDirection = (_mainCam.ScreenToWorldPoint(Input.mousePosition) - transform.position).normalized.x;
@@ -59,6 +69,14 @@ public class Player : MonoBehaviour
     private void MoveInDirection(float speed, float direction)
     {
         transform.Translate(direction * speed * Time.deltaTime,0f,0f);
+
+        Vector2 position = transform.position;
+        if (position.x > positionXDelta || position.x < -positionXDelta)
+        {
+            transform.position = new Vector2(
+                Mathf.Clamp(position.x, -positionXDelta, positionXDelta), 
+                position.y);
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D other)

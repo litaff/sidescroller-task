@@ -15,7 +15,6 @@ public abstract class PowerUp
 
     public virtual void Init()
     {
-        _charges = 1; // TODO: remove for release
         if (collider2D) collider2D.enabled = false;
         if (renderer) renderer.enabled = false;
         IsActive = false;
