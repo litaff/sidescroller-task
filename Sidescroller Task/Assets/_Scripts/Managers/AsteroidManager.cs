@@ -5,6 +5,8 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
+// TODO: Differ speed by percentage of asteroid speed
+
 public class AsteroidManager : MonoBehaviour
 {
     [SerializeField] private Asteroid asteroidPrefab;
