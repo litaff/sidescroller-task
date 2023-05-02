@@ -50,6 +50,7 @@ public class MusicManager : MonoBehaviour
     private void OnMenu()
     {
         StartTransition();
+        _source.loop = true;
         _audioTarget = menu;
         _transitionTime = menuTransitionTime;
     }
@@ -72,6 +73,10 @@ public class MusicManager : MonoBehaviour
     {
         _source.clip = _audioTarget;
         _source.Play();
+        if (_source.clip == play)
+        {
+            StartCoroutine(PlayMusicOnLoop(67.845f)); // 67.845 is the exact moment to loop to
+        }
         _fadingIn = true;
     }
     
@@ -90,5 +95,20 @@ public class MusicManager : MonoBehaviour
         _source.volume -=  1 / transition * time;
         if (_source.volume <= target)
             _fadingOut = false;
+    }
+
+    private IEnumerator PlayMusicOnLoop (float endIntro)
+    {
+        _source.loop = false;
+        var withoutIntro = _source.clip.length - endIntro;
+        yield return new WaitForSeconds (endIntro);
+        var t = _source.time;
+        yield return new WaitForSeconds (withoutIntro);
+        while (_source.clip == play)
+        {
+            _source.time = t;
+            _source.Play ();
+            yield return new WaitForSeconds (withoutIntro);
+        }
     }
 }

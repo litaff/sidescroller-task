@@ -5065,7 +5065,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2fc4c79c96c6384cb4e67405f59bf07, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  play: {fileID: 8300000, guid: 0b64b4d11871156428435e10e6a5c0fc, type: 3}
+  play: {fileID: 8300000, guid: 1cba1b768de8bcd438cdb573f4d940bc, type: 3}
   menu: {fileID: 8300000, guid: 103cbc5965eb36d4b8a558e1f09db842, type: 3}
   menuTransitionTime: 5
   playTransitionTime: 5
@@ -12002,7 +12002,7 @@ EdgeCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1348863543}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Density: 1
   m_Material: {fileID: 0}
   m_IsTrigger: 1
