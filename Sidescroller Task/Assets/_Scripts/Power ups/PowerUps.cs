@@ -20,7 +20,9 @@ public class PowerUps : MonoBehaviour
     private void InitPowerUps()
     {
         shield.Init();
+        shieldChargeDisplay.text = shield.GetCharges().ToString();
         blast.Init();
+        blastChargeDisplay.text = blast.GetCharges().ToString();
     }
     
     public void UpdatePowerUps()
