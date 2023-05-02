@@ -6,15 +6,21 @@ public class Blast : PowerUp
 {
     [SerializeField] private float blastRange;
     [SerializeField] private float blastSpeed;
+
     [Tooltip("Set starting lifetime to range/speed and speed to speed")]
-    [SerializeField] private ParticleSystem particleSystem;
+    public override void Init()
+    {
+        base.Init();
+        var main = particleSystem.main;
+        main.startLifetime = blastRange / blastSpeed;
+        main.startSpeed = blastSpeed;
+    }
 
     public override bool OnUse()
     {
         if (!base.OnUse()) return false;
         
         collider2D.radius = 0.1f;
-        particleSystem.Play();
 
         return true;
     }

@@ -11,7 +11,11 @@ public class Player : MonoBehaviour
 {
     [SerializeField] private float maxSpeed;
     [SerializeField] private float timeToMaxSpeed;
-    [SerializeField] private float positionXDelta;
+    [SerializeField] private SpawnPositionManager spawnPositionManager;
+    [SerializeField] private AudioSource deathSound;
+    [SerializeField] private ParticleSystem deathEffect;
+    [SerializeField] private AudioSource launchingSound;
+    [SerializeField] private ParticleSystem launchingEffect;
     
     private PowerUps _powerUps;
     private Vector2 _startingPosition;
@@ -19,8 +23,14 @@ public class Player : MonoBehaviour
     private float _moveDirection;
     private float _speed;
     private Camera _mainCam;
+    private ParticleSystem.MainModule _mainModule;
 
     public static event Action OnDeath;
+
+    public float GetSpeed()
+    {
+        return _speed;
+    }
     
     private void Awake()
     {
@@ -28,7 +38,11 @@ public class Player : MonoBehaviour
         timeToMaxSpeed += 0.001f; // make sure it's not 0
         _mainCam = Camera.main;
         _powerUps = GetComponentInChildren<PowerUps>();
+        _speed = 0f;
+        _mainModule = launchingEffect.main;
+        _mainModule.startSpeed = _speed;
         GameManager.OnLaunch += ReadyLaunch;
+        GameManager.OnLaunching += Launching;
         GameManager.OnPlay += Launch;
     }
 
@@ -42,12 +56,34 @@ public class Player : MonoBehaviour
     {
         _alive = true;
     }
+
+    private void Launching()
+    {
+        _speed = 0f;
+        _mainModule.loop = true;
+        _mainModule.startSpeed = _speed;
+        launchingSound.Play();
+        launchingEffect.Play();
+        StartCoroutine(DeceaseVolumeAfterLaunch(timeToMaxSpeed));
+    }
+    
+    private IEnumerator DeceaseVolumeAfterLaunch(float time)
+    {
+        yield return new WaitForSeconds(time);
+        while (launchingSound.volume > 0)
+        {
+            launchingSound.volume -= Time.deltaTime / time;
+            yield return new WaitForSeconds(Time.deltaTime);
+        }
+    }
     
     private void Update()
     {
         if (!_alive) return;
         
         if (_speed < maxSpeed) SpeedUp(Time.deltaTime);
+
+        if (_speed >= maxSpeed) _mainModule.loop = false;
 
         GetInput();
         
@@ -59,6 +95,7 @@ public class Player : MonoBehaviour
     {
         _speed += maxSpeed/timeToMaxSpeed * time;
         _speed = Mathf.Clamp(_speed, 0f, maxSpeed); // prevent from going over
+        _mainModule.startSpeed = _speed;
     }
     
     private void GetInput()
@@ -71,10 +108,13 @@ public class Player : MonoBehaviour
         transform.Translate(direction * speed * Time.deltaTime,0f,0f);
 
         Vector2 position = transform.position;
-        if (position.x > positionXDelta || position.x < -positionXDelta)
+        if (position.x > spawnPositionManager.GetDeltaX() || position.x < -spawnPositionManager.GetDeltaX())
         {
             transform.position = new Vector2(
-                Mathf.Clamp(position.x, -positionXDelta, positionXDelta), 
+                Mathf.Clamp(
+                    position.x,
+                    -spawnPositionManager.GetDeltaX(), 
+                    spawnPositionManager.GetDeltaX()), 
                 position.y);
         }
     }
@@ -90,6 +130,8 @@ public class Player : MonoBehaviour
     private void Die()
     {
         _alive = false;
+        deathEffect.Play();
+        deathSound.Play();
         OnDeath?.Invoke();
     }
 }

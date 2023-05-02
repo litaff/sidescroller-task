@@ -9,18 +9,28 @@ public class BackgroundManager : MonoBehaviour
     [SerializeField] private Color launchColor;
     [SerializeField] private Color playColor;
     [SerializeField] private float transitionTime;
+    [SerializeField] private SpawnPositionManager spawnPositionManager;
 
     private float _transition; // 0 - launch 1 - play
     private bool _play;
     private Camera _camera;
     private ParticleSystem _particleSystem;
+    private Player _player;
+    private SpriteRenderer _renderer;
+    private Vector2 _initialPlatformPosition;
 
     private void Awake()
     {
+        _player = GameObject.FindWithTag("Player").GetComponent<Player>();
+        _renderer = GetComponentInChildren<SpriteRenderer>();
+        _initialPlatformPosition = _renderer.transform.position;
         _camera = Camera.main;
         _particleSystem = GetComponent<ParticleSystem>();
+        var shape = _particleSystem.shape;
+        shape.radius = spawnPositionManager.GetDeltaX();
         _particleSystem.Stop();
         _transition = 0; // start in menu
+        GameManager.OnLaunch += OnLaunch;
         GameManager.OnPlay += OnPlay;
         GameManager.OnLose += OnMenu;
     }
@@ -31,6 +41,10 @@ public class BackgroundManager : MonoBehaviour
         
         if (_play)
         {
+            if (_renderer.transform.position.y > -10f)
+            {
+                _renderer.transform.Translate(Vector2.down * (_player.GetSpeed() * Time.deltaTime / 2));
+            }
             _transition += 1 / transitionTime * Time.deltaTime;
             if (_transition >= .9f)
             {
@@ -54,6 +68,11 @@ public class BackgroundManager : MonoBehaviour
         _camera.backgroundColor = Color.Lerp(launchColor, playColor, _transition);
     }
 
+    private void OnLaunch()
+    {
+        _renderer.transform.position = _initialPlatformPosition;
+    }
+    
     private void OnPlay()
     {
         _play = true;

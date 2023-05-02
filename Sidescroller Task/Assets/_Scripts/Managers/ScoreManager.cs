@@ -39,7 +39,7 @@ public class ScoreManager : MonoBehaviour
         scoreDisplay.text = Score.ToString();
     }
     
-    private void AsteroidBonus(Asteroid asteroid)
+    private void AsteroidBonus(Asteroid asteroid, bool byPlayer = false)
     {
         _timeScore += asteroid.GetBonus();
     }

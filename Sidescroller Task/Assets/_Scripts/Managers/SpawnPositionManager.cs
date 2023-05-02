@@ -9,6 +9,11 @@ public class SpawnPositionManager : MonoBehaviour
     {
         return new Vector2(Random.Range(-spawnDeltaX, spawnDeltaX), spawnHeight);
     }
+
+    public float GetDeltaX()
+    {
+        return spawnDeltaX;
+    }
     
     private void OnDrawGizmosSelected()
     {

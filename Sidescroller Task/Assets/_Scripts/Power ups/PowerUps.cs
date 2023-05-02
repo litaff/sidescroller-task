@@ -5,11 +5,11 @@ using UnityEngine;
 public class PowerUps : MonoBehaviour
 {
     [SerializeField] private Shield shield;
-    [SerializeField] private Blast blast;
     [SerializeField] private TMP_Text shieldChargeDisplay;
+    [SerializeField] private Blast blast;
     [SerializeField] private TMP_Text blastChargeDisplay;
 
-    public static Action<Asteroid> OnAsteroidCollision;
+    public static Action<Asteroid, bool> OnAsteroidCollision;
 
     private void Awake()
     {
@@ -34,22 +34,14 @@ public class PowerUps : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            if (shield.IsActive)
+            if (!shield.IsActive)
             {
-                shield.End();
-            }
-            else
-            {
-                shield.OnUse();
+                shield.OnUse();            
             }
         }
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            if (blast.IsActive)
-            {
-                blast.End();
-            }
-            else
+            if(!blast.IsActive)
             {
                 blast.OnUse();
             }
@@ -77,7 +69,7 @@ public class PowerUps : MonoBehaviour
         {
             if (other.CompareTag("Asteroid"))
             {
-                OnAsteroidCollision?.Invoke(other.GetComponent<Asteroid>());
+                OnAsteroidCollision?.Invoke(other.GetComponent<Asteroid>(), true);
             }
         }
     }

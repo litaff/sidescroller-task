@@ -119,10 +119,10 @@ public class AsteroidManager : MonoBehaviour
         _asteroids.Add(asteroid);
     }
 
-    private void DestroyAsteroid(Asteroid asteroid)
+    private void DestroyAsteroid(Asteroid asteroid, bool byPlayer = false)
     {
         _asteroids.Remove(asteroid);
-        Destroy(asteroid.gameObject);
+        Destroy(asteroid.gameObject, asteroid.Kill(byPlayer));
     }
 
     // for kill zone

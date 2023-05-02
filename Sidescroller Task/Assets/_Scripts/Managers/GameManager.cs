@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    private AudioSource _audioSource;
     private GameState _state;
     private List<bool> _busy; // if empty nothing is happening
 
@@ -23,6 +24,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        _audioSource = GetComponent<AudioSource>();
         _busy = new List<bool>();
         LaunchState();
     }
@@ -31,12 +33,20 @@ public class GameManager : MonoBehaviour
     {
         if (_state == GameState.Launch && NotBusy())
         {
-            if (Input.anyKeyDown) LaunchingState();
+            if (Input.anyKeyDown)
+            {
+                LaunchingState();
+                _audioSource.Play();
+            }
         }
 
         if (_state == GameState.Lose && NotBusy())
         {
-            if (Input.anyKeyDown) LaunchState();
+            if (Input.anyKeyDown)
+            {
+                LaunchState();
+                _audioSource.Play();
+            }
         }
     }
 

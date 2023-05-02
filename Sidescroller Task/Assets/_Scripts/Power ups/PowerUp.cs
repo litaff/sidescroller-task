@@ -5,6 +5,8 @@ using UnityEngine;
 public abstract class PowerUp
 {
     [SerializeField] protected CircleCollider2D collider2D;
+    [SerializeField] protected ParticleSystem particleSystem;
+    [SerializeField] private AudioSource soundEffect;
     private int _charges;
     
     
@@ -27,7 +29,9 @@ public abstract class PowerUp
 
         _charges--;
         collider2D.enabled = true;
+        particleSystem.Play();
         IsActive = true;
+        soundEffect.Play();
 
         return true;
     }
