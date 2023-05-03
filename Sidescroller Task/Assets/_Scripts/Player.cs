@@ -62,6 +62,7 @@ public class Player : MonoBehaviour
         _speed = 0f;
         _mainModule.loop = true;
         _mainModule.startSpeed = _speed;
+        launchingSound.volume = 1f;
         launchingSound.Play();
         launchingEffect.Play();
         StartCoroutine(DeceaseVolumeAfterLaunch(timeToMaxSpeed));
@@ -74,6 +75,11 @@ public class Player : MonoBehaviour
         {
             launchingSound.volume -= Time.deltaTime / time;
             yield return new WaitForSeconds(Time.deltaTime);
+        }
+
+        if (launchingSound.volume <= 0)
+        {
+            launchingSound.Stop();
         }
     }
     
