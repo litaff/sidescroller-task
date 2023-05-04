@@ -24,22 +24,21 @@ a space shuttle and dodges asteroids.
 * asteroids has varying speeds
 * there will be power ups, which will be collected for immediate
 or later use:
-  * shield, which disables collisions with asteroids or cracks them on collision
-  * blast (name may be changed), which destroys all asteroids on screen
-  * backwards thrusters, which slows down the movement of asteroids
+  * shield, which destroys asteroids on collision
+  * blast, which destroys all asteroids in a radius
+  * backwards thrusters, which slows down the movement of asteroids - 
+  not implemented as it is not needed without asteroid patterns
 * sfx
 * vfx
-* background music, arcade themed
-* background view, looping sprite
-* (maybe) varying asteroid sizes
-* (maybe) varying asteroid patterns (a series of asteroids with pre determined
-timing, count, position and size)
+* background music, synthwave
+* background view, black background + particle effects
+* varying asteroid sizes
+* varying asteroid patterns (a series of asteroids with pre determined
+timing, count, position and size) - not implemented as it would make the game less casual
 
 ## Gameplay loop
 
-The game waits for input before starting a count down (3 maybe 5 seconds).
+The game waits for input before starting a count down (5 seconds).
 After the count down finishes the game starts and slowly accelerates to top speed.
-Asteroids start to come after a set amount of time, possible patterns
-come a bit later, after the player gets comfortable with the controls and power ups.
-After death the player can start the came again by providing any input or possibly
-saving their score and then starting again.
+Asteroids start to come after a set amount of time.
+After death the player can start the game again by providing any input.
